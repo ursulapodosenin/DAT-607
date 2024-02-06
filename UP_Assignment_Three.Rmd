@@ -1,0 +1,81 @@
+---
+title: "UP_Assignment_Three"
+output: html_document
+date: "2024-02-05"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+#1. Using the 173 majors listed in fivethirtyeight.com’s College Majors dataset [https://fivethirtyeight.com/features/the-economic-guide-to-picking-a-college-major/], provide code that identifies the majors that contain either "DATA" or "STATISTICS"  
+
+```{r reading the data from the url into a data frame named "college_majors}
+
+college_majors<- data.frame(read.csv(url("https://raw.githubusercontent.com/fivethirtyeight/data/master/college-majors/majors-list.csv")))
+```
+
+```{r selecting the majors with the words "data" and "statistics"}
+data_majors<- college_majors$Major[grep("DATA", college_majors$Major)] 
+statistics_majors<- college_majors$Major[grep("STATISTICS", college_majors$Major)]
+
+data_majors
+statistics_majors
+```
+
+#2 Write code that transforms the data below:
+[1] "bell pepper"  "bilberry"     "blackberry"   "blood orange"
+[5] "blueberry"    "cantaloupe"   "chili pepper" "cloudberry"  
+[9] "elderberry"   "lime"         "lychee"       "mulberry"    
+[13] "olive"        "salal berry"
+Into a format like this:
+c("bell pepper", "bilberry", "blackberry", "blood orange", "blueberry", "cantaloupe", "chili pepper", "cloudberry", "elderberry", "lime", "lychee", "mulberry", "olive", "salal berry")
+
+```{r converting the string with the list of fruits into character values}
+
+fruit<- c("bell pepper", "bilberry", "blackberry", "blood orange", "blueberry", "cantaloupe", "chili pepper", "cloudberry", "elderberry", "lime", "lychee", "mulberry", "olive", "salal berry")
+
+fruits = as.character(fruit) 
+fruits
+```
+
+#3 Describe, in words, what these expressions will match:
+(.)\1\1 The same character will be shown three times 
+"(.)(.)\\2\\1" Two of the same characters connected to each other will be backwards
+(..)\1 Two characters of any value will be repeated 
+"(.).\\1.\\1" A single character will be shown three times and there will be a different character between each original one 
+"(.)(.)(.).*\\3\\2\\1" Three characters will be shown, then no characters, and then the three original characters backwards   
+
+#4 Construct regular expressions to match words that:
+Start and end with the same character.
+Contain a repeated pair of letters (e.g. "church" contains "ch" repeated twice.)
+Contain one letter repeated in at least three places (e.g. "eleven" contains three "e"s.)
+
+```{r installing and loading the package "stringr"}
+
+install.packages("stringr",repos = "http://cran.us.r-project.org")
+library("stringr")
+```
+
+```{r creating a list of 10 words}
+
+words<- c("measurement", "gene", "bird", "procedure", "singer", "two", "power", "cabinet", "attitude", "magazine")
+```
+
+```{r Constructing a regular expression to match words that start and end with the same character}
+
+same_char_start_and_end<- str_subset(words, "^(.)((.*\\1$)|\\1?$)") 
+same_char_start_and_end
+```
+
+```{r Constructing a regular expression to match words that contain a repeated pair of letters}
+
+repeated_letters<- str_subset(words, "([A-Za-z][A-Za-z]).*\\1")
+repeated_letters
+```
+
+```{r Constructing a regular expression to match words that contain one letter repeated in at least three places}
+
+three_repeats<- str_subset(words, "([A-Za-z]).*\\1.*\\1")
+three_repeats
+```
