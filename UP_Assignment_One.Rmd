@@ -1,0 +1,43 @@
+---
+title: "UP_Assignment_One"
+output: html_document
+date: "2024-01-31"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Nutrition has been a scandalous topic for the last several years. The data reported from the article “You Can’t Trust What You Read About Nutrition” dates back to 2016, and controversy surrounding nutritional guidelines has skyrocketed since then. Public policy constituting a “healthy” diet is developed based on misrepresented self-reporting tools like food diaries and FFQs (food frequency questionnaires). Several correlations related to various health outcomes have been documented from the collected data, often leading to inaccurate, non-causal results. The code below selects the columns from the raw data provided in the article, which I deemed most valuable for analysis. 
+
+Article Link: https://fivethirtyeight.com/features/you-cant-trust-what-you-read-about-nutrition/
+
+```{r install and load required packages}
+install.packages('readr', repos = "http://cran.us.r-project.org")
+
+library (readr)
+```
+
+```{r saving the url file into a variable titled "urlfile"}
+urlfile="https://raw.githubusercontent.com/fivethirtyeight/data/master/nutrition-studies/raw_anonymized_data.csv"
+```
+
+```{r reading the url file into a variable called "raw_data" and turning it into a data frame}
+raw_data<-read.csv(url(urlfile))
+raw_data<- data.frame(raw_data)
+```
+
+```{r selecting the subset of variables I want to work with and storing the values in "subset_raw_data"}
+subset_raw_data <-raw_data[c("ID", "cancer", "diabetes", "heart_disease", "ever_smoked", "currently_smoke", "DT_PROT", "DT_CARB", "DT_ALCO", "DT_SUG_T", "DT_FIBE", "DT_CHOL")]
+subset_raw_data
+```
+
+```{r renaming the columns of "subset_raw_data"}
+colnames(subset_raw_data) <- c("ID", "Diabetes", "Heart Disease", "Ever Smoked", "Currently Smoke", "Daily Protein Intake", "Daily Carbohydrate Intake", "Daily Alcohol Intake", "Daily Sugar Intake", "Daily Fiber Intake", "Daily Cholesterol Intake")
+```
+
+```{r obtaining a summary of the data in "subset_raw_data"}
+summary(subset_raw_data)
+```
+
+ As mentioned in the introduction, self-reporting and the inability to obtain accurate measurements are the biggest fallouts of nutritional studies to date. Ironically, it is the lack of education surrounding nutrition that makes the issue of self-reporting worse. Many people don’t know how to read a nutrition label or recognize serving sizes without a food scale, which inevitably leads to inaccurate caloric reporting. I do believe there is an issue here of having too many data points- which was often referenced in the article. Keeping people under lock and key for months, weeks, and/or years at a time for metabolic studies is unrealistic meaning that self-reporting is still the most feasible tool that we have. Aside from such studies, I am unsure of how self-reporting can be improved. However, it is important to remember that everyone has different dietary needs and restrictions, which is why nutrition is not a “one-size-fits-all approach.”
