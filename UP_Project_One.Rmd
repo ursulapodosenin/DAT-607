@@ -1,0 +1,60 @@
+---
+title: "UP_Project_One"
+author: "Ursula Podosenin"
+date: "2024-02-17"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r loading the necessary packages}
+
+library(tidyverse)
+library (readr)
+library(stringr)
+```
+
+```{r reading the url file into a data frame and exploring its structure and dimensions}
+
+urlfile= "https://raw.githubusercontent.com/ursulapodosenin/DAT-607/main/tournament_info.txt"
+
+raw_tournament_data <- data.frame(readLines(urlfile))
+str(raw_tournament_data)
+dim(raw_tournament_data)
+```
+
+```{r using regular expressions to extract the column values in the text file}
+
+player_number <- as.numeric(unlist(str_extract_all(raw_tournament_data,"(?<=\\s{3,4})\\d{1,2}(?=\\s)")))
+player_name <- unlist(str_extract_all(raw_tournament_data,"(?<=\\d\\s\\|\\s)([A-z, -]*\\s){1,}[[:alpha:]]*(?=\\s*\\|)"))
+player_state <- unlist(str_extract_all(raw_tournament_data, "[[:upper:]]{2}(?=\\s\\|)"))
+total_points <- as.numeric(unlist(str_extract_all(raw_tournament_data, "(?<=\\|)\\d\\.\\d")))
+player_pre_rating <- as.numeric(unlist(str_extract_all(raw_tournament_data, "(?<=R:\\s{1,2})(\\d{3,4}(?=\\s))|(\\d{3,4}(?=P\\d{1,2}\\s*-))")))
+```
+
+```{r creating a new data frame with the extracted columns}
+
+tournament_data <- data.frame(player_number, player_name, player_state, total_points, player_pre_rating)
+tournament_data
+
+tournament_data <- tournament_data[-c(1:5),]
+head(tournament_data)
+```
+```{r creating a "for loop" that fills an empty vector called "opponent_rating" with the new rating values, and updating the data frame}
+
+opponent_rating <- integer(length(player_number)) 
+
+for (i in 1:length(player_number)) {
+  opponents_indices <- as.numeric(unlist(player_number[player_number[i]]))
+  opponent_rating[i] <- round(mean(player_pre_rating[opponents_indices]), digits = 0)
+}
+
+chess_tournament_data <- data.frame(player_number, player_name, player_state, total_points, player_pre_rating)
+```
+
+```{r exporting the data so it can be saved as a csv file}
+
+write.csv(chess_tournament_data,file = "chess_tournament_data.csv")
+```
