@@ -1,0 +1,198 @@
+---
+title: "UP_Project_Two"
+author: "Ursula Podosenin"
+date: "2024-03-03"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+---
+title: "Project_2"
+author: "Ursula Podosenin"
+date: "2024-03-02"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+# Loading the packages used in this file
+
+library(tidyverse)
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+```
+
+```{r}
+
+# Downloading the first url file and reading it into a variable called "mta_data"
+
+url1= "https://raw.githubusercontent.com/ursulapodosenin/DAT-607/main/MTA_Daily_Ridership_Data__Beginning_2020_20240302.csv"
+mta_data<- read.csv(url1)
+
+# Renaming the columns of mta_data
+
+new_col_name <- c("Date", "Total_Subway","Subway_Prepandemic_Percent", "Total_Bus", "Bus_Prepandemic_Percent", "LIRR_Total", "LIRR_Prepandemic_Percent", "Metro_North_Total", "Metro_North_Prepandemic_Percent","Access_A_Ride_Total", "Access_A_Ride_Prepandemic_Percent", "Bridges_And_Tunnels_Total", "Bridges_And_Tunnels_Prepandemic_Percent", "Staten_Island_Total", "Staten_Island_Prepandemic_Percent")
+colnames(mta_data) <- new_col_name
+
+# Replacing NA values with 0 to maintain consistency 
+
+mta_data[is.na(mta_data)] <- 0
+
+# Creating a string with the date format being used 
+
+date_string <- "03/01/2020"
+
+# Rearranging the date format using regex
+
+rearranged_date <- sub("(\\d{2})/(\\d{2})/(\\d{4})", "\\3-\\1-\\2", date_string)
+
+# Using a the rearranged_date function to rearrange date format using regex
+
+rearrange_date <- function(date_string) {
+  rearranged_date <- sub("(\\d{2})/(\\d{2})/(\\d{4})", "\\3-\\1-\\2", date_string)
+  return(rearranged_date)}
+
+# Converting the character values to date values 
+
+mta_data <- mta_data %>%
+  mutate(Date = rearrange_date(Date))
+mta_data$Date<- as.Date(mta_data$Date)
+
+# Summarizing the  2020, 2021, 2022 average ridership for Subway, Buses, LIRR and Metro-North
+
+mta_data_2020<-mta_data[1:306, ]
+
+mean(mta_data_2020$Total_Subway)
+mean(mta_data_2020$Total_Bus)
+mean(mta_data_2020$LIRR_Total)
+mean(mta_data_2020$Metro_North_Total)
+
+mta_data_2021<-mta_data[307:671, ]
+
+mean(mta_data_2021$Total_Subway)
+mean(mta_data_2021$Total_Bus)
+mean(mta_data_2021$LIRR_Total)
+mean(mta_data_2021$Metro_North_Total)
+
+mta_data_2022<-mta_data[672:1036, ]
+
+mean(mta_data_2022$Total_Subway)
+mean(mta_data_2022$Total_Bus)
+mean(mta_data_2022$LIRR_Total)
+mean(mta_data_2022$Metro_North_Total)
+
+# Comparing the Subway and Buses and determine to see if more people took the Subway or Bus in 2020
+
+sum(mta_data_2020$Total_Subway)- sum(mta_data_2020$Total_Bus)
+sum(mta_data_2020$Total_Subway)/sum(mta_data_2020$Total_Bus)
+
+# Finding out which transportation had the highest and lowest ridership in 202
+
+sum(mta_data_2020$Total_Subway)
+sum(mta_data_2020$Total_Bus)
+sum(mta_data_2020$LIRR_Total)
+sum(mta_data_2020$Access_A_Ride_Total)
+sum(mta_data_2020$Bridges_And_Tunnels_Total)
+sum(mta_data_2020$Metro_North_Total)
+sum(mta_data_2020$Staten_Island_Total)
+
+#Subways had the highest ridership 
+```
+```{r}
+
+# Downloading the first url file and reading it into a variable called "nobel_prize"
+
+urlfile2= "https://raw.githubusercontent.com/ursulapodosenin/DAT-607/main/Nobel_Prizes.csv"
+nobel_prize<- read.csv(urlfile2, header = TRUE, sep = ",")
+nobel_prize
+
+# Converting date values and replacing NAs with zeroes for consistency 
+
+nobel_prize$awardYear<- as.integer(nobel_prize$awardYear)
+nobel_prize$dateAwarded<- as.Date(nobel_prize$dateAwarded)
+nobel_prize[is.na(nobel_prize)] <- 0000-00-00
+
+# Creating a subset of nobel_prize with the relevant columns for the analysis and renaming the columns
+
+subset_nobel_prize_data<-select(nobel_prize, awardYear, category, prizeAmount, motivation, name, gender, ind_or_org)
+new_col_names <- c("Award_Year", "Category", "Prize_Amount", "Motivation", "Name", "Gender", "Individual_or_Organization")
+colnames(subset_nobel_prize_data) <- new_col_names
+
+
+# Are there patterns of recognition in different fields? (Physics, Chemistry, etc.) Which field has received a higher number of awards? What factors may have contributed to this? 
+
+subset_nobel_prize_data|>
+  count(Category, name = "freq")|>
+  group_by(Category)|>
+  summarise(count = sum(freq))
+
+# Physiology or Medicine received the highest number of awards likely due to the need for new medical interventions and understanding of bio-mechanical processes. 
+
+# How have the number of awards given out each year changed over time?
+
+subset_nobel_prize_data|>
+  count(Award_Year, name = "freq")|>
+  group_by(Award_Year)|>
+  summarise(count = sum(freq))
+
+# 2019 had the highest number of awards given out with a total count of 14. The number of awards seems to be trending going forward in time
+
+#Which field has received the largest prize amount? Which field has received the lowest?
+subset_nobel_prize_data|>
+  group_by(Category) %>%
+  summarise(min_award= min(Prize_Amount), max_award = max(Prize_Amount), median_award= median(Prize_Amount), mean_award= mean(Prize_Amount), sd_award= sd(Prize_Amount)
+            )
+
+#Chemistry, Literature, Physics, and Physiology or Medicine received an equally minimal reward amount of 114935, while the max amount given in each field was 1000000.
+
+# What proportion of the awards are given to women vs men? How has this changed over time?
+subset_nobel_prize_data|>
+  count(Gender, name = "freq")|>
+  group_by(Gender)|>
+  summarise(count = sum(freq))
+
+sum(869,54)
+54/923
+
+#Men were gifted more awards than women with 6% of the total number of awards given to women and 94% given to men. Looking at the original data set, you can see an increase in women getting awards as the years go on. 
+```
+
+```{r}
+
+# Downloading the first url file and reading it into a variable called "AirBnB_data"
+
+url3="https://raw.githubusercontent.com/ursulapodosenin/DAT-607/main/AB_NYC_2019.csv"
+AirBnB_data<- read.csv(url3)
+AirBnB_data
+
+# Subsetting the relevant columns for the analysis 
+
+subset_airbnb<- select(AirBnB_data, neighbourhood_group, room_type, price)
+subset_airbnb
+
+
+# which neighborhood gives you a bang for your money meaning on average, which areas would allow you to rent an entire home or apartment for the least about of money?
+
+subset_airbnb|>
+  group_by(room_type)|>
+    summarise(min_price= min(price),
+              max_price= max(price),
+              median_price= median(price)
+              )
+
+subset_airbnb|>
+  group_by(neighbourhood_group)|>
+    summarise(min_price= min(price),
+              max_price= max(price),
+              median_price= median(price)
+              )
+
+#As expected, shared rooms are the cheapest. In terms of neighborhoods, Manhattan tends to be the most expensive, while Bronx is the cheapest. 
+```
