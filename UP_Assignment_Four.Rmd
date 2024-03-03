@@ -1,0 +1,80 @@
+---
+title: "UP_Assignment_Four"
+author: "Ursula Podosenin"
+date: "2024-02-24"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+
+# Loading the required packages
+library(tidyr)
+library(dplyr)
+library(ggplot2)
+```
+```{r}
+
+# Downloading the url file and reading it into a variable called "airline data"
+url_file<- "https://raw.githubusercontent.com/ursulapodosenin/DAT-607/main/airline_data.csv"
+airline_data <- read.table(url_file, header=TRUE, sep=",", na.strings = c("", "NA"))
+airline_data
+
+# Extracting the information from the variable "airline_data" and organizing it as well as creating factors out of the cities 
+long_airline_data <- gather(airline_data, City, Num_Flights, Los.Angeles:Seattle, factor_key=TRUE)
+long_airline_data
+
+# Removing NA values and filling in the data
+long_airline_data <- 
+  long_airline_data|>
+    mutate(X = as.character(na_if(X, 'NA')))|>
+      fill(X, .direction = 'down')
+
+# Removing the empty row 
+long_airline_data <- long_airline_data[-c(3, 8, 13, 18, 23), ]
+
+# Replacing character values with integer values
+long_airline_data[long_airline_data == "4,840"] <- 4840
+long_airline_data[long_airline_data == "1,841"] <- 1841
+
+# Turning the column of chracters into integers
+long_airline_data <- transform(long_airline_data,
+                             Num_Flights = as.integer(Num_Flights))
+
+# Obtaining summary statistics 
+long_airline_data|>
+        group_by(X)|> 
+          summarise(max = max(Num_Flights),
+             min=min(Num_Flights),
+             mean=mean(Num_Flights),  
+             median=median(Num_Flights),
+             standard_deviation=sd(Num_Flights))
+
+# Calculating the total number of flights by airline
+flight_counts <- long_airline_data |>
+  group_by(X) |>
+  summarise(total_flights = sum(Num_Flights))
+flight_counts
+# Alaska had 3775 flights, while AM West had 7225 flights, which is 3450 more than Alaska
+
+# Calculating the proportion of flights that were delayed for each airline
+delayed_proportions <- long_airline_data |>
+  group_by(X) |>
+  summarise(delayed_proportion = sum(Num_Flights[X.1 == "delayed"]) / sum(Num_Flights))
+delayed_proportions
+# Roughly 13% of Alaska's flights were delayed, while only 11% of AM West's flights were delayed
+
+# Visualizing the number of flights for each city using a bar plot
+ggplot(long_airline_data, aes(x = City, y = Num_Flights)) +
+  geom_bar(stat = "identity") +
+  labs(title = "Number of Flights by City", x = "City", y = "Number of Flights")
+
+# Based on this data, I would choose to fly with AM West, as they have more flights going out than Alaska, and have a lower percentage of delays.  
+```   
+
+
+
+
