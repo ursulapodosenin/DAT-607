@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+  <row>
+    <Title>Basic Physics</Title>
+    <Author> Karl F. Kuhn,  Frank Noschese </Author>
+    <Genre>Science</Genre>
+    <Pages>352</Pages>
+    <Rating>4.6</Rating>
+  </row>
+  <row>
+    <Title>History of the World Map by Map</Title>
+    <Author>DK</Author>
+    <Genre>History </Genre>
+    <Pages>448</Pages>
+    <Rating>4.8</Rating>
+  </row>
+  <row>
+    <Title>Essential Calculus Skills Practice Workbook</Title>
+    <Author>Chris McMullen</Author>
+    <Genre>Math</Genre>
+    <Pages>361</Pages>
+    <Rating>4.6</Rating>
+  </row>
+</root>
