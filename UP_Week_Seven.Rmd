@@ -1,0 +1,80 @@
+---
+title: "UP_Week_7"
+author: "Ursula Podosenin"
+date: "2024-03-09"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Week Seven Assignment 
+
+
+```{r}
+
+# Load the necessary libraries
+install.packages("xml2", repos = "http://cran.us.r-project.org")
+library(xml2)
+install.packages("XML", repos = "http://cran.us.r-project.org" )
+library(XML)
+install.packages("jsonlite", repos = "http://cran.us.r-project.org")
+library(jsonlite)
+install.packages("rvest", repos = "http://cran.us.r-project.org")
+library(rvest)
+```
+
+## HTML
+
+```{r}
+
+# Loading the HTML file into a data frame called "html_file"
+html_file <- "https://raw.githubusercontent.com/ursulapodosenin/DAT-607/main/Sheet1.html"
+html_data <- read_html(html_file)
+
+# Reading the HTML file into a data frame
+html_table <- html_data |>
+  html_nodes("table") |>
+    html_table(fill = TRUE)
+books_df_html <- html_table[[1]]
+
+# Final result
+books_df_html
+```
+
+## XML
+
+```{r}
+
+# Loading the XML file into a data frame called "xml_file"
+xml_URL <- "https://raw.githubusercontent.com/ursulapodosenin/DAT-607/main/book_two.xml"
+xmlContent <- read_xml(xml_URL)
+
+# Taking the data from the XML file and putting it into a data frame
+booksXML <- xmlParse(xmlContent)
+booksXML <- xmlToDataFrame(booksXML)
+as.data.frame(booksXML)
+
+# Final result 
+booksXML
+```
+
+## JSON
+
+```{r}
+# Loading the JSON file into a data frame called "json_file"
+json_file <- "https://raw.githubusercontent.com/ursulapodosenin/DAT-607/main/Book_Data_Three%20-%20Sheet1.json"
+
+
+# Taking the data from the JSOn file and putting it into a data frame
+json_data <- jsonlite::fromJSON(json_file)
+books_df_json <- as.data.frame(json_data)
+
+# Final result
+books_df_json
+```
+
+### Are the three data frames identical?
+
+The three data frames are not entirely identical as the HTML file did not make the variable names of each column as as the headers. Additionally, the XML file interprets the numeric values as characters while the JSON file recognizes the numbers as integers and decimals. The JSON format provides the most accurate and interpretable data frame of all three formats.
