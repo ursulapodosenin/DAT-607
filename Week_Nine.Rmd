@@ -1,0 +1,50 @@
+---
+title: "Week_Nine_Assignment"
+author: "Ursula Podosenin"
+date: "2024-03-23"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+
+# Loading the required packages
+
+library(httr)
+library(jsonlite)
+library(tidyverse)
+library(dplyr)
+```
+
+```{r}
+
+# Obtaining the url and accesing it using the API Key
+
+most_popular_url<- "https://api.nytimes.com/svc/mostpopular/v2/viewed/1.json?api-key=hx6i1GhbxcgLuxcrRtAvJ55ABmlPG4Ez"
+
+most_popular_articles<- GET(most_popular_url)
+str(most_popular_articles)
+
+
+
+most_popular_articles$status_code
+```
+
+```{r}
+
+#  Getting the raw data from the JSON file, converting it to the type character, and saving it into a data frame
+
+article_content <- content(most_popular_articles, as = "raw")
+
+character_version <- rawToChar(article_content)
+
+ja <- jsonlite::fromJSON(character_version, flatten = TRUE)
+
+most_popular_articles_data_frame <- data.frame(ja)
+most_popular_articles_data_frame
+
+```
+
