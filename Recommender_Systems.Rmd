@@ -1,0 +1,39 @@
+---
+title: "Recommender Systems"
+author: "Ursula Podosenin"
+date: "2024-04-06"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+### Powered by AI: Instagram’s Explore recommender system
+
+This document explores Instagram's Explorer Page reccomendation algorithms. The source article is Powered by AI: Instagram’s Explore recommender system by Ivan Medvedev, Haotian Wu, and Taylor Gordon.
+
+### Scenario Design Analysis
+
+1. Who are your target users?
+
+      Instagram's Explore recommender system's target users are the members of the Instagram community.
+
+2. What are their key goals?
+
+      Instagram's Explore recommender system's goals are to enhance user experience, develop more precise recommendations, show safe content that is in compliance with policies, create a balance between relevance and diversity, and deploy rapid content and feature experiments. 
+
+3. How can you help them accomplish those goals?
+
+      A data scientist can help accomplish these goals by assisting Instagram in enhancing their user experience by leveraging machine learning techniques for rapid experimentation, personalized recommendations, and developing more precise models for efficient content ranking.
+
+### Reverse Engineering
+
+1. Attempt to reverse engineer what you can about the site, from the site interface and any available information that you can find on the Internet or elsewhere.
+
+      Instagram's Explore recommender system is a modern approach to machine learning challenges. It appears that they use IGQL, which is a custom domain-specific language enabling rapid experimentation and efficient algorithm assembly. Another machine learning tool they use is account embeddings, generated using ig2vec to facilitate personalized ranking by identifying topically similar accounts. The reccomender system has a three-part ranking funnel, combining the predictions of user actions to determine content relevance. Continuous evolution and high-velocity experimentation are emphasized to meet the scale and diversity of Instagram's community and inventory. 
+
+### Specific Reccomendations 
+
+1. Include specific recommendations about how to improve the site's recommendation capabilities going forward.
+
+      To enhance Instagram's Explore recommendation capabilities, the application can focus on continuous improvement through expanding ML experimentation by enncouraging ongoing research for diverse recommendation algorithms, ensuring relevance and freshness.They can also refineme personalization by enhancing account embeddings for better  similarity and personalized ranking inventory. This can be further improved by developing more optimization techniques for efficient candidate preselection, balancing relevance and computational efficiency.
