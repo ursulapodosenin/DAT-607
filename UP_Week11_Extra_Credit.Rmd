@@ -1,0 +1,120 @@
+---
+title: "UP_Week11_Extra_Credit"
+author: "Ursula Podosenin"
+date: "2024-04-15"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+
+# Loading the required packages 
+install.packages("readxl", repos = "http://cran.us.r-project.org")
+library("readxl") 
+library(dplyr)
+library(ggplot2)
+
+# Getting the working directory and pulling the data from the Excel file 
+getwd()
+movie_ratings <- read_excel("/Users/ursulapodosenin/Desktop/MovieRatings.xlsx", sheet = 1, range = "A1:G6",
+                            col_name = TRUE, col_types = NULL)
+movie_ratings 
+
+# Naming the columns in the data frame 
+movieratings <- movie_ratings[c("CaptainAmerica", "Deadpool", "Frozen", "JungleBook", "PitchPerfect2", "StarWarsForce")]
+movieratings
+
+# Getting the average rating of each movie 
+movie_average <- colMeans(movieratings[sapply(movieratings, is.numeric)], na.rm = TRUE)
+movie_average
+
+# Calculating global average rating
+global_average <- mean(movie_average)
+
+# Calculating movie biases
+movie_biases <- movie_average - global_average
+
+# Creating a data frame with movie names, average ratings, biases, and baseline estimates
+movie_data <- data.frame(
+  Movie = names(movie_average),
+  Average_Rating = movie_average,
+  Movie_Bias = movie_biases,
+  Baseline_Estimate = global_average + movie_biases
+)
+
+# Printing movie data
+print(movie_data)
+
+# Adding IMDB ratings for each movie 
+IMDB <- c(6.9, 8.0, 7.4, 7.6, 6.4, 5.5)
+movieratings <- rbind(movieratings, IMDB)
+movieratings
+
+```
+```{r}
+
+Critic<- c("Burton", "Charley", "Dan", "Dieudonne", "Matt", "IMDB")
+cbind(movieratings, Critic)
+```
+
+```{r}
+
+# Comparing the average class score for a movie against the IMDB rating
+ca<-mean(4,5,4)
+cac<- 4/6.9
+cac
+
+dp<-mean(5,5,4)
+dpc<-5/8
+dpc
+
+fr<-mean(4,2)
+frc<- 4/7.4
+frc
+
+jb<- mean(4,3)
+jbc<- 4/7.6
+jbc
+
+sw<- mean(4,3,5,5,5)
+swc<- 4/5.5
+swc
+
+p2<-mean(2,2)
+p2c<- 2/6.4
+p2c
+
+tc<-mean(cac, dpc, frc, jbc, p2c, swc)
+tc
+```
+
+```{r}
+
+# Using the percentage above to predict the average class rating for Oppenheimer, Barbie, and Interstellar. The ratio of the class rating to the IMDB rating is the prediction factor.
+IMDB_Oppenheimer<- 8.3
+IMDB_Barbie<- 6.8
+IMDB_Interstellar<-8.7
+
+classOppenheimer<-tc*IMDB_Oppenheimer
+classOppenheimer
+classBarbie<- tc*IMDB_Barbie
+classBarbie
+class_Interstellar<-tc*IMDB_Interstellar
+class_Interstellar
+```
+
+```{r}
+
+# Creating a data frame that combines the average class rating for the listed movies and the predicted movies
+
+average_class_ratings<- as.data.frame(c(ca, dp, fr, jb, p2, sw, classOppenheimer, classBarbie, class_Interstellar))
+average_class_ratings
+
+movies_list<- c("Captain America", "Deadpool", "Frozen", "Jungle Book", "Pitch Perfect 2", "Star Wars Force", "Oppenheimer", "Barbie", "Interstellar" )
+
+cbind(movies_list, average_class_ratings)
+```
+
