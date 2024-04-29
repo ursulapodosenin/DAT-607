@@ -1,0 +1,86 @@
+---
+title: "UP_Project_Four"
+author: "Ursula Podosenin"
+date: "2024-04-08"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r}
+# Loading the required packages
+library(tidytext)
+library(caret)
+library(tm)
+
+# Reading the csv file
+emails <- read.csv("/Users/ursulapodosenin/Desktop/spamham.csv")
+```
+
+
+```{r}
+
+# Split data into training and testing sets
+set.seed(19754)  # for reproducibility
+spl <- createDataPartition(emails$label_num, p = 0.95, list = FALSE)
+train <- emails[spl, ]
+test <- emails[-spl, ]
+
+# Pre-processing the data for the training set
+trainc <- Corpus(VectorSource(train$text))
+trainc <- tm_map(trainc, content_transformer(tolower))
+trainc <- tm_map(trainc, removePunctuation)
+trainc <- tm_map(trainc, removeWords, stopwords("en"))
+```
+
+
+```{r}
+
+# Converting the data into a document term matrix and removing extra terms
+training <- DocumentTermMatrix(trainc)
+training <- removeSparseTerms(training, 0.75)
+
+# Converting the data into a data frame
+train_df <- as.data.frame(as.matrix(training))
+train_df$spam <- as.factor(train$label_num)
+```
+
+
+```{r}
+
+# Training the model using the caret package
+spamm <- train(spam ~ ., data = train_df, method = "glm", family = binomial)
+
+# Making predictions using the training data
+train_predictions <- predict(spamm, newdata = train_df)
+confusionMatrix(train_predictions, train_df$spam)
+```
+
+
+```{r}
+
+# Pre-processing the data for test set
+testc <- Corpus(VectorSource(test$text))
+testc <- tm_map(testc, content_transformer(tolower))
+testc <- tm_map(testc, removePunctuation)
+testc <- tm_map(testc, removeWords, stopwords("en"))
+
+# Converting the data into d ocument term matrix using the training set
+ttest <- DocumentTermMatrix(testc, control = list(dictionary = Terms(training)))
+
+# Converting the data into a to data frame
+test_df <- as.data.frame(as.matrix(ttest))
+test_df$spam <- as.factor(test$label_num)
+```
+
+
+```{r}
+
+# Making predictions based on the text data
+test_predictions <- predict(spamm, newdata = test_df)
+confusionMatrix(test_predictions, test_df$spam)
+```
+
